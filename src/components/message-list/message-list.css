@@ -1,0 +1,74 @@
+.message-list {
+  width: 80%;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.message-form {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.message-form textarea {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-height: 100px;
+}
+.message-form input[type="file"]{
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+.message-form button {
+  padding: 10px;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.message-form button:hover {
+  background-color: #0056b3;
+}
+
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+
+.message {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-text {
+  margin: 0;
+  word-wrap: break-word;
+}
+
+.message-time {
+  font-size: 0.8em;
+  color: #888;
+  text-align: right;
+  margin-top: 5px;
+}
+
+
+@media (max-width: 600px) {
+  .message-list {
+    width: 95%;
+  }
+}
