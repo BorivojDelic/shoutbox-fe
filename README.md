@@ -1,21 +1,31 @@
 # Shoutbox Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
 
-## Available Scripts
+This is the frontend application for the Shoutbox built with React.
 
-In the project directory, you can run:
+## Getting Started
 
-### `npm start`
+### Prerequisites
 
-Runs the app in the development mode.
+*   Node.js (v18+)
 
-### ...
+### Install
+```bash
+  npm install
+```
+
+### Run
+
+```bash
+  npm start
+```
+
+This starts the development server.
 
 ## Technical Overview
 
-- `socket.io-client` library for real time communication
-- `axios` library for Rest API requests
-- Created custom context API to manage socket connection
-- Created custom hook to manage socket connection
-- ...
+*   React
+*   `socket.io-client` (WebSockets)
+*   `axios` (API requests)
+*   Custom Hooks & Context for socket management
