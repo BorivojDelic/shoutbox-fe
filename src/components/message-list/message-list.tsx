@@ -102,13 +102,13 @@ const MessageList: React.FC = () => {
 
   return (
     <div className="message-list">
-      <h2>Shoutbox</h2>
+      <h2>Shout Box</h2>
       <form onSubmit={handleSubmit} className="message-form">
-            <textarea
-              placeholder="Enter your message"
-              value={newMessage}
-              onChange={handleMessageChange}
-            />
+        <textarea
+          placeholder="Enter your message"
+          value={newMessage}
+          onChange={handleMessageChange}
+        />
         <input
           type="file"
           name="image"
@@ -123,15 +123,21 @@ const MessageList: React.FC = () => {
             <p className="message-text">
               {handleClickableLinks(message.message)}
             </p>
-            {message.files[0] &&
-              <img
-                src={`${API_URL}/files/${message.files[0].id}`}
-                alt="message"
-                style={{ maxWidth: '300px', maxHeight: '300px' }}
-              />
-            }
+            {message.files.length > 0 && (
+              <div className="message-image-wrapper">
+                {message.files.map((file) => (
+                  <div key={file.id} className="message-image-container">
+                    <img
+                      src={`${API_URL}/files/${message.files[0].id}`}
+                      alt="message"
+                      className="message-image"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
             <p className="message-time">
-              {new Date(message.createdAt).toLocaleString()}
+              <b>{message.userIp}</b> - <b>{message.userAgent}</b> - <b>{new Date(message.createdAt).toDateString()}</b>
             </p>
           </div>
         ))}
