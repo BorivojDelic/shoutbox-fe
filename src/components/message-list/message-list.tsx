@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent, FormEvent, useRef, Ref } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import './message-list.css';
 import { MessageInterface } from '../../interfaces/message.interface';
@@ -9,7 +9,8 @@ import { MESSAGE_LIST } from '../../constants/socket.constants';
 const MessageList: React.FC = () => {
   const [messages, setMessages] = useState<MessageInterface[]>([]);
   const [newMessage, setNewMessage] = useState<string>('');
-  const [image, setImage] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLTextAreaElement>(undefined);
 
   const { socket, connect, disconnect } = useSocket();
 
@@ -50,9 +51,15 @@ const MessageList: React.FC = () => {
   };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setImage(event.target.files[0]);
+    if (!event.target?.files?.length) return;
+    const fileList: File[] = [];
+    for (let i = 0; i < event.target.files.length; i++) {
+      const file = event.target.files?.[i];
+      if (file && !files.find((f) => f.name === file.name && f.size === file.size)) {
+        fileList.push(file);
+      }
     }
+    setFiles(fileList);
   };
 
 
@@ -62,8 +69,10 @@ const MessageList: React.FC = () => {
 
     const formData = new FormData();
     formData.append('message', newMessage);
-    if (image) {
-      formData.append('image', image);
+    if (files.length) {
+      files.forEach((file) => {
+        formData.append('files', file);
+      });
     }
 
     try {
@@ -72,9 +81,12 @@ const MessageList: React.FC = () => {
           'Content-Type': 'multipart/form-data'
         }
       });
+      const inputs = document.querySelectorAll<HTMLInputElement>('form input');
+      inputs.forEach((input) => {
+        input.value = '';
+      });
       setNewMessage('');
-      setImage(null);
-      fetchMessages();
+      setFiles([]);
     } catch (error) {
       console.error('Error creating message:', error);
     }
@@ -105,15 +117,19 @@ const MessageList: React.FC = () => {
       <h2>Shout Box</h2>
       <form onSubmit={handleSubmit} className="message-form">
         <textarea
+          ref={fileInputRef as Ref<HTMLTextAreaElement>}
           placeholder="Enter your message"
           value={newMessage}
           onChange={handleMessageChange}
+          required
+          minLength={10}
         />
         <input
           type="file"
           name="image"
           accept="image/*"
           onChange={handleFileChange}
+          multiple
         />
         <button type="submit">Send</button>
       </form>
@@ -128,7 +144,7 @@ const MessageList: React.FC = () => {
                 {message.files.map((file) => (
                   <div key={file.id} className="message-image-container">
                     <img
-                      src={`${API_URL}/files/${message.files[0].id}`}
+                      src={`${API_URL}/files/${file.id}`}
                       alt="message"
                       className="message-image"
                     />
