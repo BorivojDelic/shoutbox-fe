@@ -25,7 +25,7 @@ This starts the development server.
 
 ## Technical Overview
 
-*   React
-*   `socket.io-client` (WebSockets)
+*   React + CSS
+*   `socket.io-client` (Real time communication)
 *   `axios` (API requests)
 *   Custom Hooks & Context for socket management
