@@ -1,19 +1,40 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import './message-list.css';
-import { MessageInterface } from "../../interfaces/message.interface";
-
+import { MessageInterface } from '../../interfaces/message.interface';
+import { API_URL } from '../../constants/global.constants';
+import { useSocket } from '../../contexts/socket.context';
+import { MESSAGE_LIST } from '../../constants/socket.constants';
 
 const MessageList: React.FC = () => {
   const [messages, setMessages] = useState<MessageInterface[]>([]);
-  const backendURL = 'http://localhost:5000';
   const [newMessage, setNewMessage] = useState<string>('');
-  const [limit, setLimit] = useState<number>(10);
   const [image, setImage] = useState<File | null>(null);
+
+  const { socket, connect, disconnect } = useSocket();
 
   useEffect(() => {
     fetchMessages();
-  }, [limit]);
+  }, []);
+
+  useEffect(() => {
+    connect();
+    return () => disconnect();
+  }, [connect, disconnect]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on(MESSAGE_LIST, (messageList) => {
+      setMessages(messageList);
+    });
+
+    return () => {
+      if (socket) {
+        socket.off(MESSAGE_LIST);
+      }
+    };
+  }, [socket]);
 
   const fetchMessages = async () => {
     try {
@@ -29,7 +50,7 @@ const MessageList: React.FC = () => {
   };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0){
+    if (event.target.files && event.target.files.length > 0) {
       setImage(event.target.files[0]);
     }
   };
@@ -40,9 +61,9 @@ const MessageList: React.FC = () => {
     if (!newMessage) return;
 
     const formData = new FormData();
-    formData.append("message", newMessage);
-    if(image){
-      formData.append("image", image);
+    formData.append('message', newMessage);
+    if (image) {
+      formData.append('image', image);
     }
 
     try {
@@ -56,15 +77,6 @@ const MessageList: React.FC = () => {
       fetchMessages();
     } catch (error) {
       console.error('Error creating message:', error);
-    }
-  };
-
-  const handleDeleteMessages = async () => {
-    try {
-      await axios.delete(`/messages?limit=${limit}`);
-      fetchMessages();
-    } catch (error) {
-      console.error('Error deleting messages:', error);
     }
   };
 
@@ -113,9 +125,9 @@ const MessageList: React.FC = () => {
             </p>
             {message.files[0] &&
               <img
-                src={`${backendURL}/files/${message.files[0]}`}
-                alt="message image"
-                style={{maxWidth: '300px', maxHeight: '300px'}}
+                src={`${API_URL}/files/${message.files[0].id}`}
+                alt="message"
+                style={{ maxWidth: '300px', maxHeight: '300px' }}
               />
             }
             <p className="message-time">
@@ -124,7 +136,6 @@ const MessageList: React.FC = () => {
           </div>
         ))}
       </div>
-      <button onClick={handleDeleteMessages}>Delete Old Messages</button>
     </div>
   );
 };

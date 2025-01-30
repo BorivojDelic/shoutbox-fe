@@ -1,4 +1,4 @@
-import { FileInterface } from "./file.interface";
+import { FileInterface } from './file.interface';
 
 export interface MessageInterface {
   id: number;

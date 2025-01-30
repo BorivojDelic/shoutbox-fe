@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { API_URL } from '../constants/global.constants';
 
 const setupAxios = () => {
-  axios.defaults.baseURL = `${process.env.REACT_APP_SERVER_URL}/api`;
+  axios.defaults.baseURL = API_URL;
 };
 
 export default setupAxios;
